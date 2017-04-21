@@ -1,7 +1,7 @@
 function initialize() {
     var contacts = JSON.parse(localStorage.getItem('contacts')) || [];
     var tab_config = {
-        data: contacts,
+        data: "/json/contacts.json",
         id: "liste_contacts",
         title: "Liste des Contacts enregistrés",
         footer: "NB : Utilisez la sélection pour soit supprimer soit modifier le contact",
@@ -9,17 +9,37 @@ function initialize() {
         isModify: true,
         sortOrder: 'asc' // posibilité de mettre 'asc' pour ascendant : croissant et 'desc' pour descendant : décroissant
     };
-    var tabContacts = new tabDyn(tab_config);
-    tabContacts.show();
+    var tabContacts = new tabDyn(tab_config, function(tabdyn) {
+        tabdyn.show();
+    });
+
 }
 
 /** Objet tabDyn décrit un tableau dynamique construit à partir d'un tableau dans le localStorage */
-var tabDyn = function(config) {
+var tabDyn = function(config, callback) {
     var self = this;
     var myModalInstance = null;
     this.config = config;
+    if (this.config.data.indexOf('/') == 0) {
+        const req = new XMLHttpRequest();
+        req.onreadystatechange = function(event) {
+            // XMLHttpRequest.DONE === 4
+            if (this.readyState === XMLHttpRequest.DONE) {
+                if (this.status === 200) {
+                    console.log("Réponse reçu: %s", this.responseText);
+                    self.config.data = JSON.parse(this.responseText);
+                    localStorage.setItem('contacts', JSON.stringify(self.config.data));
+                    self.columnsNames = Object.getOwnPropertyNames(self.config.data[0]);
+                    callback(self);
+                } else {
+                    console.log("Status de la réponse: %d (%s)", this.status, this.statusText);
+                }
+            }
+        };
+        req.open('GET', this.config.data, true);
+        req.send(null);
+    } else self.columnsNames = Object.getOwnPropertyNames(self.config.data[0]);
     this.htmlTab = document.getElementById(this.config.id);
-    this.columnsNames = Object.getOwnPropertyNames(this.config.data[0]);
     this.htmlTab.createCaption().innerHTML = '<h1>' + this.config.title + '</h1>';
 
     /** fonction qui créer les colonnes et leur donne un */
@@ -186,6 +206,7 @@ var tabDyn = function(config) {
         myModalInstance = new Modal(modal, options);
         myModalInstance.show();
     }
+
 };
 
 /** au chargement de la page contacts.html appel de la fonction initialize() **/
