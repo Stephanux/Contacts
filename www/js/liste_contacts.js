@@ -17,31 +17,10 @@ function initialize() {
 
 /** Objet tabDyn décrit un tableau dynamique construit à partir d'un tableau dans le localStorage */
 var tabDyn = function(config, callback) {
+    // constructeur
     var self = this;
     var myModalInstance = null;
     this.config = config;
-    if (this.config.data.indexOf('/') == 0) {
-        const req = new XMLHttpRequest();
-        req.onreadystatechange = function(event) {
-            // XMLHttpRequest.DONE === 4
-            if (this.readyState === XMLHttpRequest.DONE) {
-                if (this.status === 200) {
-                    console.log("Réponse reçu: %s", this.responseText);
-                    self.config.data = JSON.parse(this.responseText);
-                    localStorage.setItem('contacts', JSON.stringify(self.config.data));
-                    self.columnsNames = Object.getOwnPropertyNames(self.config.data[0]);
-                    callback(self);
-                } else {
-                    console.log("Status de la réponse: %d (%s)", this.status, this.statusText);
-                }
-            }
-        };
-        req.open('GET', this.config.data, true);
-        req.send(null);
-    } else self.columnsNames = Object.getOwnPropertyNames(self.config.data[0]);
-    this.htmlTab = document.getElementById(this.config.id);
-    this.htmlTab.createCaption().innerHTML = '<h1>' + this.config.title + '</h1>';
-
     /** fonction qui créer les colonnes et leur donne un */
     /** nom via les attributs des champs du formulaire  */
     this.createHeader = function() {
@@ -206,6 +185,34 @@ var tabDyn = function(config, callback) {
         myModalInstance = new Modal(modal, options);
         myModalInstance.show();
     }
+
+
+    if ((this.config.data.indexOf('/') == 0) && (localStorage.getItem('contacts') == null)) {
+        const req = new XMLHttpRequest();
+        req.onreadystatechange = function(event) {
+            // XMLHttpRequest.DONE === 4
+            if (this.readyState === XMLHttpRequest.DONE) {
+                if (this.status === 200) {
+                    console.log("Réponse reçu: %s", this.responseText);
+                    self.config.data = JSON.parse(this.responseText);
+                    localStorage.setItem('contacts', JSON.stringify(self.config.data));
+                    self.columnsNames = Object.getOwnPropertyNames(self.config.data[0]);
+                    callback(self);
+                } else {
+                    console.log("Status de la réponse: %d (%s)", this.status, this.statusText);
+                }
+            }
+        };
+        req.open('GET', this.config.data, true);
+        req.send(null);
+    } else {
+        self.config.data = JSON.parse(localStorage.getItem('contacts'));
+        self.columnsNames = Object.getOwnPropertyNames(self.config.data[0]);
+
+    }
+    this.htmlTab = document.getElementById(this.config.id);
+    this.htmlTab.createCaption().innerHTML = '<h1>' + this.config.title + '</h1>';
+    callback(self);
 
 };
 
