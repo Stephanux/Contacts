@@ -1,16 +1,30 @@
 function initialize() {
+    document.addEventListener('deviceready', onDeviceReady.bind(this), false);
+}
+
+function onDeviceReady() {
+    receivedEvent('deviceready');
+}
+
+function receivedEvent(id) {
     var contacts = JSON.parse(localStorage.getItem('contacts')) || [];
-    var tab_config = {
-        data: "/json/contacts.json",
-        id: "liste_contacts",
-        title: "Liste des Contacts enregistrés",
-        footer: "NB : Utilisez la sélection pour soit supprimer soit modifier le contact",
-        isDelete: true,
-        isModify: true,
-        sortOrder: 'asc' // posibilité de mettre 'asc' pour ascendant : croissant et 'desc' pour descendant : décroissant
-    };
-    var tabContacts = new tabDyn(tab_config, function(tabdyn) {
-        tabdyn.show();
+    var socket = io('ws://192.168.43.30:3000');
+    socket.emit('GET', 'Contacts');
+
+    socket.on('RESULT', function(data) {
+        contacts = JSON.parse(data);
+        var tab_config = {
+            data: contacts, // on peut aussi passer le tableau contacts pour intiailiser les datas.
+            id: "liste_contacts",
+            title: "Liste des Contacts enregistrés",
+            footer: "NB : Utilisez la sélection pour soit supprimer soit modifier le contact",
+            isDelete: true,
+            isModify: true,
+            sortOrder: 'asc' // posibilité de mettre 'asc' pour ascendant : croissant et 'desc' pour descendant : décroissant
+        };
+        var tabContacts = new tabDyn(tab_config, function(tabdyn) {
+            tabdyn.show();
+        });
     });
 
 }
@@ -186,7 +200,7 @@ var tabDyn = function(config, callback) {
         myModalInstance.show();
     }
 
-
+    // initialization des données via une URL ver sun json (statique ou dynamique).
     if ((this.config.data.indexOf('/') == 0) && (localStorage.getItem('contacts') == null)) {
         const req = new XMLHttpRequest();
         req.onreadystatechange = function(event) {
@@ -206,7 +220,7 @@ var tabDyn = function(config, callback) {
         req.open('GET', this.config.data, true);
         req.send(null);
     } else {
-        self.config.data = JSON.parse(localStorage.getItem('contacts'));
+        if (localStorage.getItem('contacts') != null) self.config.data = JSON.parse(localStorage.getItem('contacts'));
         self.columnsNames = Object.getOwnPropertyNames(self.config.data[0]);
 
     }

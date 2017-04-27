@@ -8,7 +8,7 @@
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
     <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <!--link rel="stylesheet" type="text/css" href="css/index.css"-->
     <title>Hello World</title>
 </head>
 
@@ -28,7 +28,7 @@
       </div>
   </nav>
         <div class="tab-content">
-                <form class="form-horizontal" role="form" method="POST" accept-charset="utf-8" action="/modifierMonProfil">
+                <form class="form-horizontal" role="form" id="contactform" method="POST" accept-charset="utf-8" action="/modifierMonProfil">
                     <div class="form-group">
                         <label for="titre" class="col-sm-2 control-label">Titre/Name/Firstname : </label>
                         <div class="col-sm-2">
@@ -45,36 +45,29 @@
                             <input class="form-control" id="prenom" placeholder="Firstname" value="" name="prenom"  type="text">
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label for="adresse1" class="col-sm-2 control-label">Adress 1 : </label>
                         <div class="col-sm-10">
                             <input class="form-control" id="adresse1" placeholder="Primary adress" value="" name="adresse1"  type="text">
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label for="adresse2" class="col-sm-2 control-label">Adress 2 : </label>
                         <div class="col-sm-10">
                             <input class="form-control" id="adresse2" placeholder="Additionnal adress" value="" name="adresse2"  type="text">
                         </div>
                     </div>
-
-
                     <div class="form-group">
                         <label for="code_postal" class="col-sm-2 control-label">Zip Code : </label>
                         <div class="col-sm-2">
                             <input class="form-control" id="code_postal" placeholder="Zip Code" value="" name="code_postal"  type="text">
                         </div>
-
-
                         <label for="ville" class="col-sm-2 control-label">City : </label>
                         <div class="col-sm-6">
                             <input class="form-control" id="ville" placeholder="City" value="" name="ville"  type="text">
                         </div>
 
                     </div>
-
                     <div class="form-group">
                         <label for="inputName" class="col-sm-2 control-label">Phone</label>
                         <div class="col-sm-5">
@@ -86,8 +79,6 @@
                             <input class="form-control" name="tel_fixe" id="tel_fixe" data-inputmask="'mask': '99-99-99-99-99'" data-mask="data-mask" placeholder="" value="" title="telephone" required="required"  type="text">
                         </div>
                     </div>
-
-
                     <div class="form-group">
                         <label for="email" class="col-sm-2 control-label">Email</label>
                         <div class="col-sm-5">
@@ -101,21 +92,17 @@
                             </div>
                         </div>
                   </div>
-
-                    <script>
-                      // ...
-                    </script>
-
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" name="button" id="button" class="btn btn-primary" >Enregistrer</button>
+                            <button type="submit" name="button" id="btn_contact" class="btn btn-primary" >Enregistrer contact</button>
                         </div>
                     </div>
 
                 </form>
             <!-- /.tab-pane -->
         </div>
-  <script type="text/javascript" src="cordova.js"></script>
+  <!--script type="text/javascript" src="cordova.js"></script-->
+  <script type="text/javascript" src="js/lib/socket.io.js"></script>
   <script type="text/javascript" src="js/contact.js"></script>
 </body>
 
